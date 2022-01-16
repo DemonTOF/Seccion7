@@ -14,7 +14,7 @@
             Console.Write("Saldo: ");     saldoAr = Convert.ToDouble(Console.ReadLine());
             Console.Write("Dirección: "); direccionAr = Console.ReadLine();
             Console.Write("Clave RFC: "); rfcAr = Console.ReadLine();
-            Console.Clear();
+            Console.Clear(); 
 
             int opcion;
             do
