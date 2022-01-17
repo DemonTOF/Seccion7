@@ -4,8 +4,8 @@
     {
         static void Main()
         {
-            string nombreAr, apellidoAr, direccionAr, rfcAr;
-            double saldoAr, montoAr = 0;
+            string nombreAr, apellidoAr, direccionAr, rfcAr, saldoFinal;
+            double saldoAr, montoAr;
 
             Console.WriteLine("Bienvenido a Industrias Oscorp");
             Console.WriteLine("Ingrese los siguientes datos solicitados");
@@ -14,12 +14,15 @@
             Console.Write("Saldo: ");     saldoAr = Convert.ToDouble(Console.ReadLine());
             Console.Write("Dirección: "); direccionAr = Console.ReadLine();
             Console.Write("Clave RFC: "); rfcAr = Console.ReadLine();
-            Console.Clear(); 
+            Console.Clear();
+
+            // Instanciamos la clase CuentaBancaria
+            CuentaBancaria cuenta = new CuentaBancaria(nombreAr, apellidoAr, ref saldoAr, direccionAr, rfcAr);
 
             int opcion;
             do
             {
-                Console.WriteLine("Elija la siguiente operación: ");
+                Console.WriteLine("\nElija la siguiente operación: ");
                 Console.WriteLine("1) Depositar una cantidad.");
                 Console.WriteLine("2) Retirar una cantidad.");
                 Console.WriteLine("3) Consultar saldo actual.");
@@ -27,16 +30,31 @@
                 Console.WriteLine("5) Salir.");
 
                 Console.Write("--> "); opcion = Convert.ToInt32(Console.ReadLine());
-                if (opcion == 1 || opcion == 2)
-                {
-                    Console.Write("Ingrese el monto: ");
-                    montoAr = Convert.ToDouble(Console.ReadLine());
-                }
+                Console.Clear();
 
-                // Instanciamos la clase CuentaBancaria
-                CuentaBancaria cuenta = new CuentaBancaria(nombreAr, apellidoAr, saldoAr, direccionAr, rfcAr, opcion, montoAr);
-                //cuenta.Opcion = opcion;
-                Console.WriteLine(cuenta.ToString()); // esta línea está mal?
+                switch (opcion)
+                {
+                    case 1:
+                        Console.Write("Monto a depositar: ");
+                        montoAr = Convert.ToDouble(Console.ReadLine());
+                        
+                        saldoFinal = cuenta.Deposito(montoAr);
+                        break;
+                    case 2:
+                        Console.Write("Monto a retirar: ");
+                        montoAr = Convert.ToDouble(Console.ReadLine());
+
+                        if (montoAr <= cuenta.Saldo) saldoFinal = cuenta.Retiro(montoAr);
+                        else Console.Write("Cantidad superada.");
+                        break;
+                    case 3:
+                        Console.Write("Su saldo actual es: " + cuenta.ConsultaSaldo());
+                        break;
+                    case 4:
+                        Console.WriteLine("Información de cliente:");
+                        Console.Write(cuenta.ToString());
+                        break;
+                }
             }
             while (opcion != 5);
             Console.ReadKey();
@@ -45,31 +63,17 @@
 
     public class CuentaBancaria
     {
-        private string nombre, apellido, direccion, rfc, saldoFinal;
-        private double saldo, monto;
-        private int opcion;
-
-        // Propiedad
-        //public int Opcion
-        //{
-        //    set => opcion = value; // escribir en opcion lo que está en value
-        //}
+        private string nombre, apellido, direccion, rfc;
+        private double saldo;
 
         // Constructor
-        public CuentaBancaria(string nombrePa, string apellidoPa, double saldoPa, string direccionPa, string rfcPa, int opcionPa, double montoPa)
+        public CuentaBancaria(string nombrePa, string apellidoPa, ref double saldoPa, string direccionPa, string rfcPa)
         {
             nombre = nombrePa;
             apellido = apellidoPa;
             saldo = saldoPa;
             direccion = direccionPa;
-            rfc = rfcPa;
-            opcion = opcionPa;
-            monto = montoPa;
-
-            if (opcion == 1) saldoFinal = Deposito(monto);
-            if (opcion == 2) saldoFinal = Retiro(monto);
-            if (opcion == 3) saldoFinal = ConsultaSaldo();
-            if (opcion == 4) saldoFinal = ToString();
+            rfc = rfcPa;  
         }
 
         // Métodos
@@ -98,19 +102,17 @@
             saldoConsulta = saldo.ToString();
             return saldoConsulta;
         }
-        public string InfoCuenta()
-        {
-            string infoCuenta;
-
-            infoCuenta = "Empleado: " + nombre + " " + apellido + "\nSaldo: " + $"{saldo}" + "\nDirección: " + direccion + "\nClave: " + rfc;
-            return infoCuenta;
-        }
         public override string ToString()
         {
             string mensaje = "";
            
-            mensaje = saldoFinal;
+            mensaje = "Empleado: " + nombre + " " + apellido + "\nSaldo: " + $"{saldo}" + "\nDirección: " + direccion + "\nClave: " + rfc;
             return mensaje;
+        }
+        public double Saldo
+        {
+            get => saldo;
+            set => saldo = value; // escribir en nip lo que está en value
         }
     }
 }
